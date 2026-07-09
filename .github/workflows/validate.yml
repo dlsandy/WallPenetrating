@@ -1,0 +1,38 @@
+name: Validate
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate manifest.json
+        run: |
+          node -e "
+            const fs = require('fs');
+            const m = JSON.parse(fs.readFileSync('manifest.json', 'utf8'));
+            const required = ['manifest_version', 'name', 'version', 'background'];
+            for (const k of required) {
+              if (!m[k]) throw new Error('manifest.json missing: ' + k);
+            }
+            console.log('manifest OK:', m.name, m.version);
+          "
+
+      - name: Check required files
+        run: |
+          test -f background/service-worker.js
+          test -f popup/popup.html
+          test -f options/options.html
+          test -f native/com.anytls.singbox.json.template
+          test -f icons/icon16.png
+          test -f icons/icon48.png
+          test -f icons/icon128.png
+          test -f bin/sing-box.exe
+          test -f bin/sing-box.version
+          echo "Required files present"

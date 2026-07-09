@@ -1,0 +1,9 @@
+{
+  "name": "com.anytls.singbox",
+  "description": "AnyTLS sing-box auto runner",
+  "path": "REPLACE_HOST_CMD_PATH",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://REPLACE_EXTENSION_ID/"
+  ]
+}

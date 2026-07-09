@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WallPenetrating</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header class="header">
+    <h1>WallPenetrating</h1>
+    <label class="switch">
+      <input type="checkbox" id="toggleEnabled" />
+      <span class="slider"></span>
+    </label>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button type="button" class="tab-btn active" data-view="overview" role="tab">概览</button>
+    <button type="button" class="tab-btn" data-view="nodes" role="tab">节点管理</button>
+  </nav>
+
+  <section id="view-overview" class="view active">
+    <section class="status">
+      <div class="status-row">
+        <span class="label">状态</span>
+        <span id="statusText" class="value">—</span>
+      </div>
+      <div class="status-row">
+        <span class="label">节点</span>
+        <span id="nodeText" class="value">—</span>
+      </div>
+      <div class="status-row">
+        <span class="label">规则</span>
+        <span id="rulesText" class="value">—</span>
+      </div>
+      <div class="status-row">
+        <span class="label">全局代理</span>
+        <label class="switch">
+          <input type="checkbox" id="globalProxy" />
+          <span class="slider"></span>
+        </label>
+      </div>
+    </section>
+
+    <section class="actions">
+      <div class="current-site" id="currentSiteBox">
+        <span id="currentSiteLabel" class="current-site-label">当前页：检测中…</span>
+        <div class="current-site-actions">
+          <button type="button" id="addCurrentSiteBtn" class="secondary small" disabled>加入规则</button>
+          <button type="button" id="removeCurrentSiteBtn" class="secondary small" hidden>移出规则</button>
+        </div>
+      </div>
+      <select id="nodeSelect" aria-label="快速切换节点"></select>
+      <div class="singbox-status" id="singboxStatus">sing-box: 检测中…</div>
+      <button id="openOptions" type="button" class="secondary">网址规则设置</button>
+    </section>
+
+    <p class="hint" id="hintText"></p>
+
+    <section class="diagnostics" id="diagnosticsBox">
+      <h3>连接诊断</h3>
+      <ul id="diagList"></ul>
+      <div class="diag-actions">
+        <button type="button" id="testNodeBtn" class="secondary small">测试连接</button>
+        <button type="button" id="copyExtensionIdBtn" class="secondary small">复制扩展 ID</button>
+        <button type="button" id="repairBtn" class="secondary small">修复节点配置</button>
+      </div>
+    </section>
+  </section>
+
+  <section id="view-nodes" class="view" hidden>
+    <div class="toolbar">
+      <button type="button" id="addNodeBtn">添加节点</button>
+      <button type="button" id="importUriBtn" class="secondary">URI 导入</button>
+    </div>
+    <div id="nodesList" class="nodes-list"></div>
+    <p class="hint">开启分流后 sing-box 将自动启动，各节点本地 SOCKS 端口不可冲突。</p>
+  </section>
+
+  <dialog id="nodeDialog">
+    <form method="dialog" id="nodeForm">
+      <h3 id="nodeDialogTitle">添加节点</h3>
+      <label>
+        名称
+        <input type="text" id="nodeName" placeholder="我的节点" />
+      </label>
+      <label>
+        服务器地址
+        <input type="text" id="nodeHost" placeholder="example.com" required />
+      </label>
+      <div class="row-2">
+        <label>
+          端口
+          <input type="number" id="nodePort" value="443" min="1" max="65535" required />
+        </label>
+        <label>
+          本地 SOCKS 端口
+          <input type="number" id="nodeLocalPort" value="1080" min="1" max="65535" required />
+        </label>
+      </div>
+      <label>
+        密码
+        <span class="password-row">
+          <input type="password" id="nodePassword" required />
+          <button type="button" id="togglePasswordBtn" class="secondary small">显示</button>
+        </span>
+      </label>
+      <label>
+        SNI（可选）
+        <input type="text" id="nodeSni" placeholder="留空则使用服务器地址" />
+      </label>
+      <label class="checkbox-row">
+        <input type="checkbox" id="nodeInsecure" />
+        允许不安全 TLS
+      </label>
+      <input type="hidden" id="nodeLocalHost" value="127.0.0.1" />
+      <label class="checkbox-row">
+        <input type="checkbox" id="nodeEnabled" checked />
+        启用节点
+      </label>
+      <div class="command-box">
+        <span>sing-box 配置预览</span>
+        <code id="nodeConfigPreview">—</code>
+        <button type="button" id="copyConfigBtn" class="secondary small">复制</button>
+      </div>
+      <div class="dialog-actions">
+        <button type="button" class="secondary" id="nodeCancelBtn">取消</button>
+        <button type="submit">保存</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="uriDialog">
+    <form method="dialog" id="uriForm">
+      <h3>从 URI 导入</h3>
+      <label>
+        AnyTLS URI
+        <textarea id="uriInput" rows="3" placeholder="anytls://password@host:443/?sni=example.com" required></textarea>
+      </label>
+      <div class="dialog-actions">
+        <button type="button" class="secondary" id="uriCancelBtn">取消</button>
+        <button type="submit">导入</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

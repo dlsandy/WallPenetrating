@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WallPenetrating - 设置</title>
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <div class="brand">
+          <h1>WallPenetrating</h1>
+          <p>指定网站通过代理节点访问</p>
+        </div>
+        <nav>
+          <button type="button" class="nav-btn active" data-tab="rules">网址管理</button>
+          <button type="button" class="nav-btn" data-tab="nodes">节点管理</button>
+          <button type="button" class="nav-btn" data-tab="singbox">运行环境</button>
+          <button type="button" class="nav-btn" data-tab="guide">使用说明</button>
+        </nav>
+      </div>
+      <div class="sidebar-footer">
+        <div class="toggle-row">
+          <span>启用分流</span>
+          <label class="switch">
+            <input type="checkbox" id="globalEnabled" />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <span>全局代理</span>
+          <label class="switch">
+            <input type="checkbox" id="globalProxy" />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <p class="sidebar-hint">开启后所有网页走代理节点（局域网除外）</p>
+        <div class="sidebar-backup">
+          <button type="button" id="exportFullBtn" class="secondary">导出全部配置</button>
+          <button type="button" id="importFullBtn" class="secondary">导入全部配置</button>
+        </div>
+        <p class="sidebar-id">
+          扩展 ID：<code id="extensionIdText">—</code>
+          <button type="button" id="copyExtensionIdBtn" class="secondary small">复制</button>
+        </p>
+        <p id="sidebarStatus" class="sidebar-status">—</p>
+        <p id="singboxSidebarStatus" class="sidebar-status">—</p>
+      </div>
+    </aside>
+
+    <main class="content">
+      <!-- 网址管理 -->
+      <section id="tab-rules" class="tab active">
+        <header class="tab-header tab-header-compact">
+          <div>
+            <h2>网址管理</h2>
+            <p>配置走代理节点的域名，以及始终直连的敏感站点</p>
+          </div>
+        </header>
+
+        <nav class="rules-subtabs" role="tablist" aria-label="网址规则类型">
+          <button type="button" class="rules-subtab-btn active" data-rules-subtab="proxy" role="tab" aria-selected="true">
+            代理规则
+          </button>
+          <button type="button" class="rules-subtab-btn" data-rules-subtab="direct" role="tab" aria-selected="false">
+            直连名单
+          </button>
+        </nav>
+
+        <div id="rules-subtab-proxy" class="rules-subtab active" role="tabpanel">
+          <div class="subtab-toolbar">
+            <p class="subtab-desc">匹配的域名通过 WallPenetrating 访问；可为每条规则指定节点，未指定则使用默认节点</p>
+            <div class="tab-actions">
+              <button type="button" id="importRulesBtn" class="secondary">导入文件</button>
+              <button type="button" id="exportRulesBtn" class="secondary">导出文件</button>
+              <button type="button" id="addRuleBtn">添加网址</button>
+            </div>
+          </div>
+          <div class="rules-search-row">
+            <input
+              type="search"
+              id="rulesSearchInput"
+              class="rules-search-input"
+              placeholder="搜索匹配模式或类型…"
+              aria-label="搜索代理规则"
+              autocomplete="off"
+            />
+          </div>
+          <div class="table-wrap table-wrap-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>启用</th>
+                  <th>匹配模式</th>
+                  <th>类型</th>
+                  <th>节点</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="rulesBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="rules-subtab-direct" class="rules-subtab" role="tabpanel" hidden>
+          <div class="subtab-toolbar">
+            <p class="subtab-desc">匹配的域名始终直连，优先级高于代理规则与全局代理</p>
+            <div class="tab-actions">
+              <button type="button" id="addDirectRuleBtn">添加直连</button>
+            </div>
+          </div>
+          <div class="direct-toggles">
+            <label class="checkbox-row inline">
+              <input type="checkbox" id="directBypassEnabled" />
+              启用直连名单
+            </label>
+            <label class="checkbox-row inline">
+              <input type="checkbox" id="useBuiltinDirect" />
+              内置名单（政务、银行、支付等）
+            </label>
+          </div>
+          <div class="table-wrap table-wrap-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>启用</th>
+                  <th>匹配模式</th>
+                  <th>类型</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="directRulesBody"></tbody>
+            </table>
+          </div>
+          <p class="subsection-hint">内置名单不可单独删除，可通过上方开关整体关闭。</p>
+        </div>
+      </section>
+
+      <!-- 节点管理 -->
+      <section id="tab-nodes" class="tab">
+        <header class="tab-header">
+          <div>
+            <h2>AnyTLS 节点管理</h2>
+            <p>配置 AnyTLS 服务器，分流开启后 sing-box 自动连接</p>
+          </div>
+          <div class="tab-actions">
+            <button type="button" id="importNodesBtn" class="secondary">导入文件</button>
+            <button type="button" id="exportNodesBtn" class="secondary">导出文件</button>
+            <button type="button" id="exportNodesSafeBtn" class="secondary">导出（无密码）</button>
+            <button type="button" id="importUriBtn" class="secondary">从 URI 导入</button>
+            <button type="button" id="addNodeBtn">添加节点</button>
+          </div>
+        </header>
+        <div class="subscription-panel">
+          <h3 class="env-section-title">节点订阅</h3>
+          <p class="sub-hint">支持纯文本（每行一个 <code>anytls://</code> 链接）、Base64 或 JSON 格式</p>
+          <label class="subscription-url-field">
+            订阅链接
+            <input type="url" id="subscriptionUrl" placeholder="https://example.com/anytls.txt" />
+          </label>
+          <p id="subscriptionStatus" class="sub-hint">—</p>
+          <div class="subscription-options">
+            <label class="subscription-check">
+              <input type="checkbox" id="subscriptionAutoRefresh" />
+              定时自动刷新（替换全部节点）
+            </label>
+            <label class="subscription-interval-field">
+              刷新间隔
+              <select id="subscriptionRefreshHours">
+                <option value="6">6 小时</option>
+                <option value="12">12 小时</option>
+                <option value="24">24 小时</option>
+                <option value="168">7 天</option>
+              </select>
+            </label>
+          </div>
+          <div class="env-actions">
+            <button type="button" id="saveSubscriptionBtn" class="secondary">保存链接</button>
+            <button type="button" id="refreshSubscriptionBtn">刷新订阅</button>
+          </div>
+        </div>
+        <div id="nodesList" class="cards"></div>
+      </section>
+
+      <!-- 运行环境 -->
+      <section id="tab-singbox" class="tab">
+        <header class="tab-header">
+          <div>
+            <h2>运行环境</h2>
+            <p>查看 sing-box 与 Native Host 的运行状态</p>
+          </div>
+        </header>
+        <div class="env-panel">
+          <div id="singboxStatusBox" class="status-card">检测中…</div>
+          <div id="systemProxyStatusBox" class="status-card">检测系统代理…</div>
+          <div class="env-actions">
+            <button type="button" id="refreshSingboxBtn" class="secondary">刷新状态</button>
+            <button type="button" id="syncSingboxBtn">立即同步 sing-box</button>
+            <button type="button" id="openSystemProxyBtn" class="secondary">打开系统代理设置</button>
+          </div>
+
+          <h3 class="env-section-title">运行日志</h3>
+          <p class="log-hint">来自 <code>data/singbox.log</code></p>
+          <pre id="singboxLogPanel" class="log-panel">加载中…</pre>
+          <div class="log-actions">
+            <button type="button" id="refreshLogsBtn" class="secondary">刷新日志</button>
+            <button type="button" id="copyLogsBtn" class="secondary">复制日志</button>
+            <button type="button" id="clearLogsBtn" class="danger">清除日志</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 使用说明 -->
+      <section id="tab-guide" class="tab">
+        <header class="tab-header">
+          <div>
+            <h2>使用说明</h2>
+            <p>Chrome 扩展通过 PAC 脚本将指定域名路由到本地 SOCKS5 代理</p>
+          </div>
+        </header>
+        <article class="guide">
+
+          <h3>导入与导出</h3>
+          <ul>
+            <li>网址规则与节点均支持 JSON 文件导入/导出（选项页）</li>
+            <li>节点密码仅保存在本机，不会同步到 Google 账号</li>
+            <li>导出文件含敏感信息，请妥善保管</li>
+          </ul>
+
+          <h3>快速开始</h3>
+          <ol>
+            <li>完成运行环境中的一次性 Native Host 配置（双击「一键安装.cmd」）</li>
+            <li>在「节点管理」中添加 AnyTLS 节点（支持 URI 导入）</li>
+            <li>在「网址管理」中添加需要代理的域名</li>
+            <li>开启「启用分流」</li>
+          </ol>
+
+          <h3>节点订阅</h3>
+          <ul>
+            <li>在「节点管理」填写订阅链接，点击「刷新订阅」</li>
+            <li>支持每行一个 <code>anytls://</code> 链接、Base64 编码或 JSON 数组</li>
+            <li>可开启定时自动刷新（后台替换全部节点）</li>
+            <li>订阅设置会随「导出全部配置」一并备份</li>
+            <li>通过 Native Host 拉取，无需额外网络权限</li>
+          </ul>
+
+          <h3>URI 格式示例</h3>
+          <pre>anytls://password@example.com:443/?sni=real.example.com
+anytls://password@1.2.3.4:8443/?insecure=1</pre>
+
+          <h3>多节点分流</h3>
+          <ul>
+            <li>每条代理规则可指定独立节点；未指定则使用「默认节点」（节点管理中「设为默认」）</li>
+            <li>不同规则可走不同 AnyTLS 节点，sing-box 会同时监听各节点的本地 SOCKS 端口</li>
+            <li>全局代理模式下仍只使用默认节点</li>
+          </ul>
+
+          <h3>匹配类型说明</h3>
+          <ul>
+            <li><strong>域名</strong>：匹配 example.com 及其子域名</li>
+            <li><strong>通配符</strong>：如 *.example.com</li>
+            <li><strong>正则</strong>：对 host 进行正则匹配（高级）</li>
+          </ul>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <!-- 网址编辑弹窗 -->
+  <dialog id="ruleDialog">
+    <form method="dialog" id="ruleForm">
+      <h3 id="ruleDialogTitle">添加网址</h3>
+      <label>
+        匹配模式
+        <input type="text" id="rulePattern" placeholder="例如 google.com 或 *.google.com" required />
+      </label>
+      <label>
+        类型
+        <select id="ruleType">
+          <option value="domain">域名</option>
+          <option value="wildcard">通配符</option>
+          <option value="regex">正则</option>
+        </select>
+      </label>
+      <label id="ruleNodeField">
+        代理节点
+        <select id="ruleNodeId">
+          <option value="">默认（当前节点）</option>
+        </select>
+      </label>
+      <label class="checkbox-row">
+        <input type="checkbox" id="ruleEnabled" checked />
+        启用
+      </label>
+      <div class="dialog-actions">
+        <button type="button" class="secondary" id="ruleCancelBtn">取消</button>
+        <button type="submit">保存</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- 节点编辑弹窗 -->
+  <dialog id="nodeDialog">
+    <form method="dialog" id="nodeForm">
+      <h3 id="nodeDialogTitle">添加节点</h3>
+      <label>
+        名称
+        <input type="text" id="nodeName" placeholder="我的节点" />
+      </label>
+      <label>
+        服务器地址
+        <input type="text" id="nodeHost" placeholder="example.com 或 1.2.3.4" required />
+      </label>
+      <label>
+        端口
+        <input type="number" id="nodePort" value="443" min="1" max="65535" required />
+      </label>
+      <label>
+        密码
+        <span class="password-row">
+          <input type="password" id="nodePassword" required />
+          <button type="button" id="togglePasswordBtn" class="secondary small">显示</button>
+        </span>
+      </label>
+      <label>
+        SNI（可选）
+        <input type="text" id="nodeSni" placeholder="TLS SNI，留空则使用服务器地址" />
+      </label>
+      <label class="checkbox-row">
+        <input type="checkbox" id="nodeInsecure" />
+        允许不安全 TLS（insecure=1）
+      </label>
+      <hr />
+      <label>
+        本地 SOCKS 地址
+        <input type="text" id="nodeLocalHost" value="127.0.0.1" required />
+      </label>
+      <label>
+        本地 SOCKS 端口
+        <input type="number" id="nodeLocalPort" value="1080" min="1" max="65535" required />
+      </label>
+      <label class="checkbox-row">
+        <input type="checkbox" id="nodeEnabled" checked />
+        启用
+      </label>
+      <div class="command-box">
+        <span>sing-box 配置预览</span>
+        <code id="nodeConfigPreview">—</code>
+        <button type="button" id="copyConfigBtn" class="secondary small">复制</button>
+      </div>
+      <div class="dialog-actions">
+        <button type="button" class="secondary" id="nodeCancelBtn">取消</button>
+        <button type="submit">保存</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- URI 导入弹窗 -->
+  <dialog id="uriDialog">
+    <form method="dialog" id="uriForm">
+      <h3>从 URI 导入节点</h3>
+      <label>
+        AnyTLS URI
+        <textarea id="uriInput" rows="3" placeholder='anytls://password@host:443/?sni=example.com' required></textarea>
+      </label>
+      <div class="dialog-actions">
+        <button type="button" class="secondary" id="uriCancelBtn">取消</button>
+        <button type="submit">导入</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="options.js"></script>
+</body>
+</html>

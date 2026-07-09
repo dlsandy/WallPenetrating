@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AnyTLS 分流 - 开始使用</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+      background: #0f1419;
+      color: #e7ecf3;
+      line-height: 1.7;
+    }
+    h1 { font-size: 26px; margin-bottom: 8px; }
+    .subtitle { color: #8b9cb3; margin-bottom: 32px; }
+    .step {
+      background: #1a2332;
+      border: 1px solid #2d3a4f;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .step-num {
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      line-height: 28px;
+      text-align: center;
+      background: #3b82f6;
+      border-radius: 50%;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    .step h2 {
+      display: inline;
+      font-size: 18px;
+      margin: 0;
+    }
+    .step p { margin: 12px 0 0; color: #b8c5d6; }
+    code, .path {
+      background: #243044;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 13px;
+      word-break: break-all;
+    }
+    .tip {
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-top: 24px;
+      font-size: 14px;
+    }
+    a { color: #60a5fa; }
+  </style>
+</head>
+<body>
+  <h1>AnyTLS 分流扩展</h1>
+  <p class="subtitle">安装完成后，按下面 3 步即可使用</p>
+
+  <div class="step">
+    <span class="step-num">1</span>
+    <h2>添加节点</h2>
+    <p>点击浏览器工具栏上的扩展图标 →「节点管理」→「URI 导入」，粘贴你的 AnyTLS 订阅链接。</p>
+  </div>
+
+  <div class="step">
+    <span class="step-num">2</span>
+    <h2>添加网站</h2>
+    <p>点击「网址规则设置」→ 添加需要代理的域名，例如 <code>google.com</code>。</p>
+  </div>
+
+  <div class="step">
+    <span class="step-num">3</span>
+    <h2>开启分流</h2>
+    <p>在扩展 Popup 右上角打开开关。看到 <strong>sing-box: 运行中</strong> 即表示成功。</p>
+  </div>
+
+  <div class="tip">
+    <strong>遇到问题？</strong><br />
+    · 重新安装：双击项目文件夹中的 <strong>一键安装.cmd</strong><br />
+    · 停止 sing-box：运行 <code>scripts\kill-singbox.ps1</code><br />
+    · Google 打不开：在地址栏输入 <code>chrome://flags</code>，搜索 QUIC 并设为 Disabled
+  </div>
+</body>
+</html>

@@ -1,0 +1,26 @@
+# 运行时数据（含节点密码、日志、PID）
+data/
+
+# Native Messaging 注册文件（本机路径与扩展 ID）
+native/com.anytls.singbox.json
+
+# 用户导出的规则备份
+网址规则备份/
+
+# 测试输出
+data/out-test*.txt
+
+# 本地打包归档
+*.rar
+*.zip
+
+# 操作系统
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+*~

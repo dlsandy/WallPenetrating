@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "WallPenetrating",
+  "version": "2.11.0",
+  "description": "指定网站通过节点访问，支持全局代理与规则分流",
+  "permissions": ["proxy", "storage", "nativeMessaging", "activeTab", "contextMenus", "alarms", "scripting"],
+  "background": {
+    "service_worker": "background/service-worker.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "WallPenetrating",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
