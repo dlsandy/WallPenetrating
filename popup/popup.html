@@ -8,7 +8,10 @@
 </head>
 <body>
   <header class="header">
-    <h1>WallPenetrating</h1>
+    <div class="header-title">
+      <h1>WallPenetrating</h1>
+      <span id="versionText" class="version"></span>
+    </div>
     <label class="switch">
       <input type="checkbox" id="toggleEnabled" />
       <span class="slider"></span>
@@ -38,6 +41,13 @@
         <span class="label">全局代理</span>
         <label class="switch">
           <input type="checkbox" id="globalProxy" />
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="status-row">
+        <span class="label" title="未匹配规则的网页直连返回 404 时，自动加入临时代理规则并经节点重新加载">规则外 404 自动走代理</span>
+        <label class="switch">
+          <input type="checkbox" id="autoRetryOn404" />
           <span class="slider"></span>
         </label>
       </div>

@@ -32,10 +32,22 @@ body {
   margin-bottom: 12px;
 }
 
+.header-title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
 .header h1 {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
+}
+
+.version {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 500;
 }
 
 .switch {

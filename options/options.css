@@ -66,6 +66,11 @@ body {
   font-size: 13px;
 }
 
+.brand .version {
+  margin-top: 4px;
+  font-size: 12px;
+}
+
 .sidebar nav {
   display: flex;
   flex-direction: column;

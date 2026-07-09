@@ -18,12 +18,14 @@ import { persistSettings } from "../lib/persist-settings.js";
 import { patternFromTabUrl, findDomainRule, upsertDomainRule, upsertWildcardRule, removeDomainRule, shouldOfferWildcardRule } from "../lib/site-rules.js";
 import { resolveRuleNode } from "../lib/routing.js";
 import { findDirectBypassMatch } from "../lib/direct-bypass.js";
+import { VERSION } from "../lib/version.js";
 
 let settings = null;
 let editingNodeId = null;
 
 const toggleEnabled = document.getElementById("toggleEnabled");
 const globalProxyToggle = document.getElementById("globalProxy");
+const autoRetryOn404Toggle = document.getElementById("autoRetryOn404");
 const statusText = document.getElementById("statusText");
 const nodeText = document.getElementById("nodeText");
 const rulesText = document.getElementById("rulesText");
@@ -356,6 +358,7 @@ async function renderOverview() {
 
   toggleEnabled.checked = settings.enabled;
   globalProxyToggle.checked = settings.globalProxy;
+  autoRetryOn404Toggle.checked = Boolean(settings.autoRetryOn404);
 
   if (ready) {
     statusText.textContent = settings.globalProxy ? "全局代理" : "已启用";
@@ -453,6 +456,11 @@ toggleEnabled.addEventListener("change", async () => {
 
 globalProxyToggle.addEventListener("change", async () => {
   settings.globalProxy = globalProxyToggle.checked;
+  await persist();
+});
+
+autoRetryOn404Toggle.addEventListener("change", async () => {
+  settings.autoRetryOn404 = autoRetryOn404Toggle.checked;
   await persist();
 });
 
@@ -620,6 +628,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
 });
 
 async function init() {
+  document.getElementById("versionText").textContent = `v${VERSION}`;
   await chrome.runtime.sendMessage({ type: "MIGRATE_SETTINGS" });
   await loadSettings();
   renderOverview();

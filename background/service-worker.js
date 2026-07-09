@@ -26,6 +26,9 @@ import {
   syncSubscriptionAlarm,
   SUBSCRIPTION_ALARM,
 } from "../lib/subscription.js";
+import { initRetryOn404 } from "../lib/retry-on-404.js";
+import { getTempRules } from "../lib/temp-rules.js";
+import { getEffectiveProxyRules } from "../lib/proxy-rules.js";
 
 function stripAnsi(text) {
   return text?.replace(/\x1b\[[0-9;]*m/g, "") ?? "";
@@ -265,6 +268,7 @@ async function syncProxy() {
 function shouldSyncOnStorageChange(changes, area) {
   if (area === "sync" && changes.settings) return true;
   if (area === "local" && (changes.nodes || changes.activeNodeId)) return true;
+  if (area === "session" && changes.tempRules) return true;
   return false;
 }
 
@@ -338,7 +342,8 @@ async function handleMessage(message) {
 
       const selectedNode = getSelectedNode(settings);
 
-      const enabledRules = settings.rules.filter((r) => r.enabled && r.pattern.trim());
+      const tempRules = await getTempRules();
+      const enabledRules = getEffectiveProxyRules(settings, tempRules);
 
       const issues = [];
 
@@ -362,6 +367,10 @@ async function handleMessage(message) {
 
         issues.push("没有启用的网址规则");
 
+      }
+
+      if (tempRules.length > 0) {
+        issues.push(`临时代理规则 ${tempRules.filter((r) => r.enabled).length} 条（关闭浏览器后清空）`);
       }
 
       if (settings.enabled && settings.globalProxy) {
@@ -501,6 +510,8 @@ async function handleMessage(message) {
         directRuleCount: directRules.length,
 
         enabledRuleCount: enabledRules.length,
+
+        tempRuleCount: tempRules.filter((r) => r.enabled).length,
 
         issues,
 
@@ -751,6 +762,7 @@ chrome.runtime.onSuspend.addListener(() => clearProxySettings({ forceStopSingbox
 (async () => {
 
   setupContextMenu();
+  initRetryOn404();
 
   await migrateSettings(await getSettings());
 

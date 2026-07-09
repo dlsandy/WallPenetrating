@@ -27,11 +27,18 @@ import { persistSettings } from "../lib/persist-settings.js";
 import { detectRuleImportIssues } from "../lib/rule-import-check.js";
 import { BUILTIN_DIRECT_RULES } from "../lib/direct-bypass.js";
 import {
+  getTempRules,
+  removeTempRule,
+  updateTempRule,
+  promoteTempRuleToPermanent,
+} from "../lib/temp-rules.js";
+import {
   getChromeProxyDetails,
   describeChromeProxyConflict,
 } from "../lib/proxy-diagnostics.js";
 import { getSubscriptionMeta, saveSubscriptionMeta, buildSubscriptionExport, applySubscriptionImport } from "../lib/subscription.js";
 import { resolveRuleNode, ruleNodeLabel, countRulesUsingNode } from "../lib/routing.js";
+import { VERSION } from "../lib/version.js";
 
 let settings = null;
 let editingRuleId = null;
@@ -41,12 +48,15 @@ let editingNodeId = null;
 
 const globalEnabled = document.getElementById("globalEnabled");
 const globalProxy = document.getElementById("globalProxy");
+const autoRetryOn404 = document.getElementById("autoRetryOn404");
+const projectUrlInput = document.getElementById("projectUrl");
 const sidebarStatus = document.getElementById("sidebarStatus");
 const singboxSidebarStatus = document.getElementById("singboxSidebarStatus");
 const singboxStatusBox = document.getElementById("singboxStatusBox");
 const systemProxyStatusBox = document.getElementById("systemProxyStatusBox");
 const singboxLogPanel = document.getElementById("singboxLogPanel");
 const rulesBody = document.getElementById("rulesBody");
+const tempRulesBody = document.getElementById("tempRulesBody");
 const rulesSearchInput = document.getElementById("rulesSearchInput");
 const directRulesBody = document.getElementById("directRulesBody");
 const directBypassEnabled = document.getElementById("directBypassEnabled");
@@ -128,6 +138,12 @@ function updateConfigPreview() {
 function renderSidebar() {
   globalEnabled.checked = settings.enabled;
   globalProxy.checked = settings.globalProxy;
+  if (autoRetryOn404) {
+    autoRetryOn404.checked = Boolean(settings.autoRetryOn404);
+  }
+  if (projectUrlInput) {
+    projectUrlInput.value = settings.projectUrl ?? "";
+  }
   const node = getActiveNode(settings);
   const ruleCount = settings.rules.filter((r) => r.enabled).length;
   const ready = settings.enabled && node && (settings.globalProxy || ruleCount > 0);
@@ -310,6 +326,37 @@ function renderRules() {
   }
 }
 
+async function applyTempRulesProxy() {
+  await chrome.runtime.sendMessage({ type: "APPLY_PROXY" });
+}
+
+async function renderTempRules() {
+  if (!tempRulesBody) return;
+
+  const tempRules = await getTempRules();
+  tempRulesBody.innerHTML = "";
+
+  if (!tempRules.length) {
+    tempRulesBody.innerHTML = `<tr><td colspan="5" class="empty">暂无临时代理规则</td></tr>`;
+    return;
+  }
+
+  for (const rule of tempRules) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><input type="checkbox" data-action="toggle-temp-rule" data-id="${rule.id}" ${rule.enabled ? "checked" : ""} /></td>
+      <td><code>${escapeHtml(rule.pattern)}</code> <span class="badge">临时</span></td>
+      <td>${typeLabel(rule.type)}</td>
+      <td>${escapeHtml(ruleNodeLabel(rule, settings))}</td>
+      <td>
+        <button type="button" class="secondary small" data-action="promote-temp-rule" data-id="${rule.id}">转为代理规则</button>
+        <button type="button" class="danger small" data-action="delete-temp-rule" data-id="${rule.id}">删除</button>
+      </td>
+    `;
+    tempRulesBody.appendChild(tr);
+  }
+}
+
 function renderDirectRules() {
   if (!directRulesBody) return;
 
@@ -406,6 +453,7 @@ async function persist() {
   await persistSettings(settings);
   renderSidebar();
   renderRules();
+  await renderTempRules();
   renderDirectRules();
   renderNodes();
   await renderSingboxPanel();
@@ -519,9 +567,11 @@ async function refreshSubscription() {
 
 async function load() {
   settings = await getSettings();
+  document.getElementById("versionText").textContent = `v${VERSION}`;
   document.getElementById("extensionIdText").textContent = chrome.runtime.id;
   renderSidebar();
   renderRules();
+  await renderTempRules();
   renderDirectRules();
   renderNodes();
   await renderSubscriptionPanel();
@@ -607,6 +657,28 @@ globalProxy.addEventListener("change", async () => {
   settings.globalProxy = globalProxy.checked;
   await persist();
 });
+
+autoRetryOn404?.addEventListener("change", async () => {
+  settings.autoRetryOn404 = autoRetryOn404.checked;
+  await persist();
+});
+
+async function saveProjectUrl() {
+  const url = projectUrlInput?.value.trim() ?? "";
+  if (url) {
+    try {
+      new URL(url);
+    } catch {
+      alert("项目网址格式无效，请输入完整的 http/https 地址");
+      return;
+    }
+  }
+  settings.projectUrl = url;
+  await persist();
+  alert(url ? "项目网址已保存" : "项目网址已清除");
+}
+
+document.getElementById("saveProjectUrlBtn")?.addEventListener("click", saveProjectUrl);
 
 directBypassEnabled?.addEventListener("change", async () => {
   settings.directBypassEnabled = directBypassEnabled.checked;
@@ -1019,6 +1091,8 @@ async function importFullConfig() {
 
     settings.enabled = Boolean(full.enabled);
     settings.globalProxy = Boolean(full.globalProxy);
+    settings.autoRetryOn404 = Boolean(full.autoRetryOn404);
+    settings.projectUrl = typeof full.projectUrl === "string" ? full.projectUrl : settings.projectUrl;
     settings.directBypassEnabled = full.directBypassEnabled !== false;
     settings.useBuiltinDirect = full.useBuiltinDirect !== false;
     settings.rules = importedRules;

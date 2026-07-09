@@ -21,6 +21,12 @@ jobs:
             for (const k of required) {
               if (!m[k]) throw new Error('manifest.json missing: ' + k);
             }
+            const versionJs = fs.readFileSync('lib/version.js', 'utf8');
+            const match = versionJs.match(/VERSION = ['\"]([^'\"]+)['\"]/);
+            if (!match) throw new Error('lib/version.js missing VERSION');
+            if (m.version !== match[1]) {
+              throw new Error('version mismatch: manifest=' + m.version + ' lib/version.js=' + match[1]);
+            }
             console.log('manifest OK:', m.name, m.version);
           "
 
