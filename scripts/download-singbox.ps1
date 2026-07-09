@@ -1,6 +1,6 @@
-﻿# Download sing-box to bin/sing-box.exe (pinned version)
+﻿# Download sing-box to bin/sing-box.exe (pinned version; AnyTLS requires 1.12.0+)
 param(
-    [string]$Version = "1.11.7"
+    [string]$Version = "1.13.14"
 )
 
 $ErrorActionPreference = "Stop"

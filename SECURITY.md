@@ -12,4 +12,4 @@
 
 ## 第三方组件
 
-- 本项目内置 [sing-box](https://github.com/SagerNet/sing-box) v1.11.7（`bin/sing-box.exe`），遵循其 [GPLv3 许可证](bin/LICENSE)。
+- 本项目内置 [sing-box](https://github.com/SagerNet/sing-box) v1.13.14（`bin/sing-box.exe`），遵循其 [GPLv3 许可证](bin/LICENSE)。AnyTLS 协议需 sing-box **1.12.0+**。

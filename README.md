@@ -1,6 +1,6 @@
 # WallPenetrating
 
-Chrome 扩展，通过 **AnyTLS** 协议实现智能分流代理。指定网站走代理节点，其余流量直连；也可一键切换全局代理。项目已内置 [sing-box](https://github.com/SagerNet/sing-box) v1.11.7（`bin/sing-box.exe`），开启分流时由 Native Host 自动拉起本地 SOCKS5，无需单独下载或手动维护进程。
+Chrome 扩展，通过 **AnyTLS** 协议实现智能分流代理。指定网站走代理节点，其余流量直连；也可一键切换全局代理。项目已内置 [sing-box](https://github.com/SagerNet/sing-box) v1.13.14（`bin/sing-box.exe`），开启分流时由 Native Host 自动拉起本地 SOCKS5，无需单独下载或手动维护进程。
 
 **适用场景**：只需让 Google、YouTube 等特定网站走代理，日常浏览与网银支付保持直连。
 
@@ -260,7 +260,7 @@ Wall-Penetrating/
 │   └── com.anytls.singbox.json.template
 ├── scripts/                 # 安装与维护脚本
 ├── icons/                   # 扩展图标（16 / 48 / 128 px）
-├── bin/                     # sing-box 二进制（v1.11.7，含 LICENSE）
+├── bin/                     # sing-box 二进制（v1.13.14，含 LICENSE）
 │   ├── sing-box.exe
 │   ├── libcronet.dll
 │   └── sing-box.version
@@ -282,11 +282,11 @@ Wall-Penetrating/
 # 指定扩展 ID，跳过交互输入
 .\install.ps1 -ExtensionId <32位小写字母ID>
 
-# 强制重新下载 sing-box（默认 v1.11.7，一般无需执行）
+# 强制重新下载 sing-box（默认 v1.13.14，一般无需执行）
 .\install.ps1 -DownloadSingbox
 
 # 单独下载/升级 sing-box 到指定版本
-.\scripts\download-singbox.ps1 -Version 1.11.7
+.\scripts\download-singbox.ps1 -Version 1.13.14
 
 # 重新生成扩展图标
 .\scripts\generate-icons.ps1
@@ -336,7 +336,7 @@ git push -u origin main
 
 ### 第三方依赖
 
-- [sing-box](https://github.com/SagerNet/sing-box) v1.11.7 — 已内置在 `bin/`，遵循 [GPLv3](bin/LICENSE)。如需升级版本，运行 `scripts/download-singbox.ps1`。
+- [sing-box](https://github.com/SagerNet/sing-box) v1.13.14 — 已内置在 `bin/`，遵循 [GPLv3](bin/LICENSE)。如需升级版本，运行 `scripts/download-singbox.ps1`。
 
 ---
 
