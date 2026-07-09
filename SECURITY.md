@@ -2,7 +2,7 @@
 
 ## 报告漏洞
 
-如发现安全漏洞，请通过 GitHub Issues 报告（标题注明 `[Security]`），勿在公开 Issue 中粘贴节点密码、订阅链接等敏感信息。
+如发现安全漏洞，请通过 [GitHub Issues](https://github.com/dlsandy/WallPenetrating/issues) 报告（标题注明 `[Security]`），勿在公开 Issue 中粘贴节点密码、订阅链接等敏感信息。
 
 ## 本地数据
 
