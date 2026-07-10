@@ -871,6 +871,37 @@ directRulesBody?.addEventListener("click", async (e) => {
   }
 });
 
+tempRulesBody?.addEventListener("click", async (e) => {
+  const target = e.target.closest("[data-action]");
+  if (!target) return;
+  const id = target.dataset.id;
+  const action = target.dataset.action;
+
+  if (action === "toggle-temp-rule") {
+    await updateTempRule(id, { enabled: target.checked });
+    await applyTempRulesProxy();
+    return;
+  }
+
+  if (action === "delete-temp-rule") {
+    if (!confirm("确定删除此临时代理规则？")) return;
+    await removeTempRule(id);
+    await applyTempRulesProxy();
+    await renderTempRules();
+    return;
+  }
+
+  if (action === "promote-temp-rule") {
+    const tempRules = await getTempRules();
+    const tempRule = tempRules.find((rule) => rule.id === id);
+    if (!tempRule) return;
+
+    promoteTempRuleToPermanent(settings, tempRule, createRule);
+    await removeTempRule(id);
+    await persist();
+  }
+});
+
 nodesList.addEventListener("click", async (e) => {
   const target = e.target.closest("[data-action]");
   if (!target) return;

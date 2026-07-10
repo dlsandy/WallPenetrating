@@ -38,7 +38,7 @@
           </label>
         </div>
         <div class="toggle-row">
-          <span title="未匹配规则的网页直连返回 404 时，自动加入临时代理规则并经节点重新加载">规则外 404 自动走代理</span>
+          <span title="未匹配规则的网页直连无法访问时，自动加入临时代理规则并经节点重新加载">规则外无法访问时自动走代理</span>
           <label class="switch">
             <input type="checkbox" id="autoRetryOn404" />
             <span class="slider"></span>
@@ -122,7 +122,7 @@
 
         <div id="rules-subtab-temp" class="rules-subtab" role="tabpanel" hidden>
           <div class="subtab-toolbar">
-            <p class="subtab-desc">规则外页面 404 时自动加入此处；关闭浏览器后自动清空，可转为永久代理规则</p>
+            <p class="subtab-desc">规则外页面无法访问时自动加入此处；关闭浏览器后自动清空，可转为永久代理规则</p>
           </div>
           <div class="table-wrap table-wrap-scroll">
             <table>
@@ -295,7 +295,7 @@ anytls://password@1.2.3.4:8443/?insecure=1</pre>
 
           <h3>v1.10 新增</h3>
           <ul>
-            <li><strong>规则外 404 自动走代理</strong>：未在规则内的站点直连返回 404 时，自动加入临时代理规则并重载（弹窗 / 侧边栏开关，默认关）</li>
+            <li><strong>规则外无法访问时自动走代理</strong>：未在规则内的站点直连无法访问时，自动加入临时代理规则并重载（弹窗 / 侧边栏开关，默认关）</li>
             <li><strong>临时代理规则</strong>：会话内有效，关闭浏览器后清空；可在「网址管理 → 临时代理规则」转为永久规则</li>
             <li>弹窗与选项页显示扩展版本号；侧边栏可设置项目网址</li>
           </ul>

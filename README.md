@@ -1,6 +1,6 @@
 # WallPenetrating
 
-Chrome / Edge 浏览器VPN扩展（**v1.10.0**），通过 **AnyTLS** 协议实现智能分流代理。指定网站走代理节点，其余流量直连；也可一键切换全局代理。项目已内置 [sing-box](https://github.com/SagerNet/sing-box) v1.13.14（`bin/sing-box.exe`），开启分流时由 Native Host 自动拉起本地 SOCKS5，无需单独下载或手动维护进程。
+Chrome / Edge 浏览器VPN扩展（**v1.10.1**），通过 **AnyTLS** 协议实现智能分流代理。指定网站走代理节点，其余流量直连；也可一键切换全局代理。项目已内置 [sing-box](https://github.com/SagerNet/sing-box) v1.13.14（`bin/sing-box.exe`），开启分流时由 Native Host 自动拉起本地 SOCKS5，无需单独下载或手动维护进程。
 
 **GitHub：** https://github.com/dlsandy/WallPenetrating
 
@@ -331,7 +331,7 @@ WallPenetrating/
 ├── 一键安装.cmd             # 推荐安装入口
 ├── install.ps1              # 安装向导
 ├── 开始使用.html            # 安装后快速入门页
-├── manifest.json            # Chrome 扩展清单（当前 v1.10.0）
+├── manifest.json            # Chrome 扩展清单（当前 v1.10.1）
 └── README.md
 ```
 

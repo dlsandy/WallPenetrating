@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "WallPenetrating",
-  "version": "1.10.0",
+  "version": "1.10.1",
   "description": "指定网站通过节点访问，支持全局代理与规则分流",
-  "permissions": ["proxy", "storage", "nativeMessaging", "activeTab", "contextMenus", "alarms", "scripting", "webRequest"],
+  "permissions": ["proxy", "storage", "nativeMessaging", "activeTab", "contextMenus", "alarms", "scripting", "webRequest", "webNavigation", "tabs"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background/service-worker.js",
